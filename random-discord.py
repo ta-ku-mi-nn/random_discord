@@ -9,7 +9,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 categories = {
     "APEX": ["ブラッドハウンド", "シア", "スパロー", "ヴァンテージ", "ヴァルキリー", "クリプト", "コースティック", "カタリスト", "ランパート", "ワットソン", "パスファインダー", "レイス", "オクタン", "ホライゾン", "レヴナント", "オルター", "バンガロール", "ヒューズ", "マッドマギー", "アッシュ", "バリスティック", "ミラージュ", "ライフライン", "コンジット", "ニューキャッスル", "ジブラルタル", "ローバ"],
-    "動物": ["ねこ", "いぬ", "うさぎ", "とり", "さる", "ぞう", "ライオン", "ペンギン", "カンガルー"],
+    "VALORANT": ["ねこ", "いぬ", "うさぎ", "とり", "さる", "ぞう", "ライオン", "ペンギン", "カンガルー"],
     "色": ["赤", "青", "緑", "黄色", "紫", "オレンジ", "ピンク", "白", "黒"]
 }
 
@@ -21,8 +21,8 @@ async def on_ready():
 @bot.tree.command(name="randomwords", description="カテゴリと数を選んでランダムワードを生成します")
 @app_commands.choices(
     category=[
-        app_commands.Choice(name="果物", value="果物"),
-        app_commands.Choice(name="動物", value="動物"),
+        app_commands.Choice(name="APEX", value="APEX"),
+        app_commands.Choice(name="VALORANT", value="VALORANT"),
         app_commands.Choice(name="色", value="色"),
     ],
     count=[
