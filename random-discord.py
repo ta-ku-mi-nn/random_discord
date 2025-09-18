@@ -7,10 +7,20 @@ import random
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-categories = {
-    "APEX": ["ブラッドハウンド", "シア", "スパロー", "ヴァンテージ", "ヴァルキリー", "クリプト", "コースティック", "カタリスト", "ランパート", "ワットソン", "パスファインダー", "レイス", "オクタン", "ホライゾン", "レヴナント", "オルター", "バンガロール", "ヒューズ", "マッドマギー", "アッシュ", "バリスティック", "ミラージュ", "ライフライン", "コンジット", "ニューキャッスル", "ジブラルタル", "ローバ"],
-    "VALORANT": ["ねこ", "いぬ", "うさぎ", "とり", "さる", "ぞう", "ライオン", "ペンギン", "カンガルー"],
-    "色": ["赤", "青", "緑", "黄色", "紫", "オレンジ", "ピンク", "白", "黒"]
+# エージェントリスト
+agents = {
+    "デュエリスト": [
+        "ジェット", "レイズ", "フェニックス", "レイナ", "ヨル", "ネオン", "アイソ", "ウェイレイ"
+    ],
+    "イニシエーター": [
+        "ブリーチ", "ソーヴァ", "スカイ", "KAY／O", "フェイド", "ゲッコー", "テホ"
+    ],
+    "コントローラー": [
+        "オーメン", "ブリムストーン", "ヴァイパー", "アストラ", "ハーバー", "クローヴ"
+    ],
+    "センチネル": [
+        "セージ", "サイファー", "キルジョイ", "チェンバー", "デッドロック", "ヴァイス"
+    ]
 }
 
 @bot.event
@@ -18,33 +28,37 @@ async def on_ready():
     await bot.tree.sync()
     print(f"✅ Logged in as {bot.user}")
 
-@bot.tree.command(name="randomwords", description="カテゴリと数を選んでランダムワードを生成します")
-@app_commands.choices(
-    category=[
-        app_commands.Choice(name="APEX", value="APEX"),
-        app_commands.Choice(name="VALORANT", value="VALORANT"),
-        app_commands.Choice(name="色", value="色"),
-    ],
-    count=[
-        app_commands.Choice(name="1個", value=1),
-        app_commands.Choice(name="2個", value=2),
-        app_commands.Choice(name="3個", value=3),
-        app_commands.Choice(name="4個", value=4),
-        app_commands.Choice(name="5個", value=5),
-    ]
-)
-async def randomwords(interaction: discord.Interaction, category: app_commands.Choice[str], count: app_commands.Choice[int]):
-    chosen = random.sample(categories[category.value], count.value)
+@bot.tree.command(name="randomteam_valo", description="Valorantエージェントをカテゴリごとにランダムで選択（重複なし）")
+async def randomteam_valo(interaction: discord.Interaction):
+    result = {}
+    selected_agents = set()  # 重複防止
 
-    embed = discord.Embed(
-        title=f"🎲 ランダムワード生成（{category.value} - {count.value}個）",
-        description="\n".join(f"• {word}" for word in chosen),
-        color=discord.Color.green() if category.value == "果物" else (
-            discord.Color.orange() if category.value == "動物" else discord.Color.blue()
+    # 各カテゴリから1人ずつ選択
+    for category, agent_list in agents.items():
+        choices = [a for a in agent_list if a not in selected_agents]
+        chosen = random.choice(choices)
+        result[category] = chosen
+        selected_agents.add(chosen)
+
+    # 全カテゴリから1人（重複なし）
+    all_agents = [a for a in sum(agents.values(), []) if a not in selected_agents]
+    result["全カテゴリ"] = random.choice(all_agents)
+
+    # Embed作成（色はすべてデフォルト）
+    embeds = []
+    for cat, agent in result.items():
+        embed = discord.Embed(
+            title=f"🎲 {cat} - ランダム選択",
+            description=agent
         )
-    )
-    embed.set_footer(text="Botによるランダムワード生成")
+        embed.set_footer(text="Botによるランダムチーム生成")
+        embeds.append(embed)
     
-    await interaction.response.send_message(embed=embed)
+    # Embedを順番に送信
+    for embed in embeds:
+        await interaction.channel.send(embed=embed)
+    
+    await interaction.response.send_message("✅ ランダムチーム生成完了！", ephemeral=True)
 
+# Botトークンは環境変数から
 bot.run(os.getenv("DISCORD_TOKEN"))
