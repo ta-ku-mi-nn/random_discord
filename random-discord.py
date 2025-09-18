@@ -31,7 +31,7 @@ async def on_ready():
     print(f"✅ Bot logged in as {bot.user}")
 
 # ===== Valorantコマンド =====
-@bot.tree.command(name="randomteam_valo", description="Valorantエージェントをカテゴリごとにランダムで選択（重複なし）")
+@bot.tree.command(name="randomteam_valo", description="VALORANTの構成を考えてくれる")
 async def randomteam_valo(interaction: discord.Interaction):
     result = {}
     selected_agents = set()  # 重複防止
@@ -45,7 +45,7 @@ async def randomteam_valo(interaction: discord.Interaction):
 
     # 全カテゴリから1人（重複なし）
     all_agents = [a for a in sum(valo_agents.values(), []) if a not in selected_agents]
-    result["全カテゴリ"] = random.choice(all_agents)
+    result["フレックス"] = random.choice(all_agents)
 
     # Embed作成
     embed = discord.Embed(title="🎲 Valorant ランダムチーム生成", color=discord.Color.blurple())
@@ -56,7 +56,7 @@ async def randomteam_valo(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed)
 
 # ===== APEXコマンド =====
-@bot.tree.command(name="random_apex3", description="APEXエージェントを3人ランダム選択")
+@bot.tree.command(name="random_apex3", description="APEXの構成を考えてくれる")
 async def random_apex3(interaction: discord.Interaction):
     chosen = random.sample(apex_agents, 3)
     embed = discord.Embed(
