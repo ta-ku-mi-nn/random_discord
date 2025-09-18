@@ -1,3 +1,4 @@
+import os
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -6,7 +7,6 @@ import random
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# カテゴリごとのワードリスト
 categories = {
     "果物": ["りんご", "みかん", "バナナ", "ぶどう", "メロン", "スイカ", "いちご", "キウイ", "マンゴー"],
     "動物": ["ねこ", "いぬ", "うさぎ", "とり", "さる", "ぞう", "ライオン", "ペンギン", "カンガルー"],
@@ -18,7 +18,6 @@ async def on_ready():
     await bot.tree.sync()
     print(f"✅ Logged in as {bot.user}")
 
-# スラッシュコマンド定義
 @bot.tree.command(name="randomwords", description="カテゴリと数を選んでランダムワードを生成します")
 @app_commands.choices(
     category=[
@@ -34,11 +33,7 @@ async def on_ready():
         app_commands.Choice(name="5個", value=5),
     ]
 )
-async def randomwords(
-    interaction: discord.Interaction,
-    category: app_commands.Choice[str],
-    count: app_commands.Choice[int]
-):
+async def randomwords(interaction: discord.Interaction, category: app_commands.Choice[str], count: app_commands.Choice[int]):
     chosen = random.sample(categories[category.value], count.value)
 
     embed = discord.Embed(
@@ -52,4 +47,4 @@ async def randomwords(
     
     await interaction.response.send_message(embed=embed)
 
-bot.run("YOUR_BOT_TOKEN")
+bot.run(os.getenv("DISCORD_TOKEN"))
